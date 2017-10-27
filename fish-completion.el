@@ -38,10 +38,14 @@
 
 ;;; Code:
 
+(require 'em-cmpl)
+
 (defvar fish-completion-command "fish"
   "The `fish' executable.")
 
 ;; TODO: Make minor mode for buffer-local completion?  Probably not worth it.
+
+;;;###autoload
 (defun fish-completion-eshell-global-toggle ()
   "Turn on/off fish shell completion in all future Eshells.
 Eshell fallbacks on fish whenever it cannot complete normally."
@@ -54,6 +58,7 @@ Eshell fallbacks on fish whenever it cannot complete normally."
     (setq eshell-default-completion-function 'fish-completion-eshell-complete)
     (message "fish completion enabled in all future Eshells")))
 
+;;;###autoload
 (defun fish-completion-eshell-toggle ()
   "Turn on/off fish shell completion in current Eshell.
 Eshell fallbacks on fish whenever it cannot complete normally."
