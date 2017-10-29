@@ -1,4 +1,4 @@
-;;; fish-completion.el --- Add Evil bindings to calendar
+;;; fish-completion.el --- Add fish completion to Emacs and Eshell
 
 ;; Copyright (C) 2017 Pierre Neidhardt
 
