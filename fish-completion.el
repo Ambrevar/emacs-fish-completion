@@ -28,6 +28,10 @@
 ;;   (fish-completion-eshell-toggle-globally))
 ;;
 ;; Alternatively, you can call the `fish-completion-eshell-toggle' manually.
+;;
+;; The package `bash-completion' is an optional dependency: if available,
+;; `fish-completion-complete' can be configured to fall back on bash to further
+;; try completing.
 
 ;;; Bugs:
 ;; If the user fish config change directory on startup, file completion will
@@ -44,12 +48,17 @@
   "The `fish' executable.")
 
 ;; TODO: Make minor mode for buffer-local completion?  Probably not worth it.
-(setq fish-completion--old-completion-function nil)
+(defvar fish-completion--old-completion-function nil)
+
+(defvar fish-completion-fallback-on-bash-p nil
+  "Fall back on bash completion if possible.
+
+This requires the bash-completion package.")
 
 ;;;###autoload
 (defun fish-completion-eshell-toggle-globally ()
   "Turn on/off fish shell completion in all future Eshells.
-Eshell fallbacks on fish whenever it cannot complete normally."
+Eshell falls back on fish whenever it cannot complete normally."
   (interactive)
   (if (or (eq eshell-default-completion-function 'fish-completion-eshell-complete)
           (not (executable-find fish-completion-command)))
@@ -66,7 +75,7 @@ Eshell fallbacks on fish whenever it cannot complete normally."
 ;;;###autoload
 (defun fish-completion-eshell-toggle ()
   "Turn on/off fish shell completion in current Eshell.
-Eshell fallbacks on fish whenever it cannot complete normally."
+Eshell falls back on fish whenever it cannot complete normally."
   (interactive)
   (if (or (eq pcomplete-default-completion-function 'fish-completion-eshell-complete)
           (not (executable-find fish-completion-command)))
@@ -85,14 +94,13 @@ Eshell fallbacks on fish whenever it cannot complete normally."
   (fish-completion-complete (buffer-substring-no-properties
                              (save-excursion (eshell-bol) (point)) (point))))
 
-(defvar eshell-fish-completion-fallback-on-bash-p nil
-  "Fallback on bash completion if possible.
-
-This requires the bash-completion package.")
-
 ;;; TODO: "mpv --" does not complete.  Too many entries?
 (defun fish-completion-complete (raw-prompt)
-  "Complete RAW-PROMPT (any string) using the fish shell."
+  "Complete RAW-PROMPT (any string) using the fish shell.
+
+If `fish-completion-fallback-on-bash-p' is non-nil and if the
+`bash-completion' package is available, fall back on bash in case
+no completion was found with fish."
   (while (pcomplete-here
           (let ((comp-list
                  (let* (;; Keep spaces at the end with OMIT-NULLS=nil in `split-string'.
