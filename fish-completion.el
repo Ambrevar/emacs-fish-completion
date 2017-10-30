@@ -3,9 +3,8 @@
 ;; Copyright (C) 2017 Pierre Neidhardt
 
 ;; Author: Pierre Neidhardt <ambrevar@gmail.com>
-;; Package-Version: 20171025.0000
 ;; Homepage: https://github.com/Ambrevar/emacs-fish-completion
-;; Version: 0
+;; Version: 0.1
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published
