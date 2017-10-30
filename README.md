@@ -5,11 +5,11 @@ This package extends the `pcomplete` completion framework with completion from t
 
 The fish shell has smart completion for a wide range of programs.
 
-Eshell, which uses `pcomplete` for completion, can be made to fallback on fish
+Eshell, which uses `pcomplete` for completion, can be made to fall back on fish
 when it does not find any completion candidate with its native completion
 support.
 
-## Installation
+## Setup
 
 To enable fish fallback completion in all Eshell buffers, add this to your Emacs
 configuartion:
