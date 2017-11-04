@@ -1,4 +1,4 @@
-;;; fish-completion.el --- Add fish completion to Emacs and Eshell
+;;; fish-completion.el --- Add fish completion to pcomplete (shell and Eshell)  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2017 Pierre Neidhardt
 
@@ -24,16 +24,17 @@
 ;;
 ;; (when (and (executable-find "fish")
 ;;            (require 'fish-completion nil t))
-;;   (fish-completion-eshell-toggle-globally))
+;;   (global-fish-completion-mode))
 ;;
-;; Alternatively, you can call the `fish-completion-eshell-toggle' manually.
+;; Alternatively, you can call the `fish-completion-mode' manually or in shell /
+;; Eshell mode hook.
 ;;
 ;; The package `bash-completion' is an optional dependency: if available,
 ;; `fish-completion-complete' can be configured to fall back on bash to further
-;; try completing.
+;; try completing.  See `fish-completion-fallback-on-bash-p'.
 
 ;;; Bugs:
-;; If the user fish config change directory on startup, file completion will
+;; If the fish user config changes directory on startup, file completion will
 ;; not be right.  One work-around is to add a "cd default-directory" before the
 ;; "complete", but that's brittle because of unreliable shell escaping.
 ;; Upstream does not allow for skipping the user config:
@@ -46,8 +47,8 @@
 (defvar fish-completion-command "fish"
   "The `fish' executable.")
 
-;; TODO: Make minor mode for buffer-local completion?  Probably not worth it.
 (defvar fish-completion--old-completion-function nil)
+(make-variable-buffer-local 'fish-completion--old-completion-function)
 
 (defvar fish-completion-fallback-on-bash-p nil
   "Fall back on bash completion if possible.
@@ -55,43 +56,26 @@
 This requires the bash-completion package.")
 
 ;;;###autoload
-(defun fish-completion-eshell-toggle-globally ()
-  "Turn on/off fish shell completion in all future Eshells.
-Eshell falls back on fish whenever it cannot complete normally."
-  (interactive)
-  (if (or (eq eshell-default-completion-function 'fish-completion-eshell-complete)
-          (not (executable-find fish-completion-command)))
-      (progn
-        (setq eshell-default-completion-function
-              (if fish-completion--old-completion-function
-                  fish-completion--old-completion-function
-                (eval (car (get 'eshell-default-completion-function 'standard-value)))))
-        (message "fish completion disabled in all future Eshells"))
-    (setq fish-completion--old-completion-function eshell-default-completion-function)
-    (setq eshell-default-completion-function 'fish-completion-eshell-complete)
-    (message "fish completion enabled in all future Eshells")))
+(define-minor-mode fish-completion-mode
+  "Turn on/off fish shell completion in all future shells or Eshells.
 
-;;;###autoload
-(defun fish-completion-eshell-toggle ()
-  "Turn on/off fish shell completion in current Eshell.
-Eshell falls back on fish whenever it cannot complete normally."
-  (interactive)
-  (if (or (eq pcomplete-default-completion-function 'fish-completion-eshell-complete)
-          (not (executable-find fish-completion-command)))
-      (progn
-        (setq pcomplete-default-completion-function
-              (if fish-completion--old-completion-function
-                  fish-completion--old-completion-function
-                (eval (car (get 'eshell-default-completion-function 'standard-value)))))
-        (message "fish completion disabled in current Eshell"))
-    (set (make-local-variable 'fish-completion--old-completion-function) pcomplete-default-completion-function)
-    (setq pcomplete-default-completion-function 'fish-completion-eshell-complete)
-    (message "fish completion enabled in current Eshell")))
+In `shell', completion is replaced by fish completion.
+In `eshell', fish completion is only used when `pcomplete' fails."
+  :init-value nil
+  (if (not fish-completion-mode)
+      (setq pcomplete-default-completion-function fish-completion--old-completion-function)
+    (setq fish-completion--old-completion-function pcomplete-default-completion-function
+          pcomplete-default-completion-function 'fish-completion-shell-complete)))
 
-(defun fish-completion-eshell-complete ()
-  "Complete Eshell's prompt with `fish-completion-complete'."
+(defun turn-on-fish-completion-mode ()
+  (fish-completion-mode 1))
+
+(define-globalized-minor-mode global-fish-completion-mode fish-completion-mode turn-on-fish-completion-mode)
+
+(defun fish-completion-shell-complete ()
+  "Complete `shell' or `eshell' prompt with `fish-completion-complete'."
   (fish-completion-complete (buffer-substring-no-properties
-                             (save-excursion (eshell-bol) (point)) (point))))
+                             (save-excursion (if (eq major-mode 'shell-mode) (comint-bol) (eshell-bol)) (point)) (point))))
 
 ;;; TODO: "mpv --" does not complete.  Too many entries?
 (defun fish-completion-complete (raw-prompt)
