@@ -130,7 +130,7 @@ no completion was found with fish."
                            (split-string
                             (with-output-to-string
                               (with-current-buffer standard-output
-                                (call-process fish-completion-command nil t nil "-c" (format "complete -C'%s'" prompt))))
+                                (call-process fish-completion-command nil t nil "-c" (format "complete -C%s" (shell-quote-argument prompt)))))
                             "\n" t)))))
             (if (and (not comp-list)
                      fish-completion-fallback-on-bash-p
