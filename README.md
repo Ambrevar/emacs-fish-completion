@@ -3,23 +3,27 @@
 This package extends the `pcomplete` completion framework with completion from the
 [fish shell](http://fishshell.com/).
 
-The fish shell has smart completion for a wide range of programs.
+The `fish` shell has smart completion for a wide range of programs.  `fish` does
+not require any special configuration to work with this package.
 
-Eshell, which uses `pcomplete` for completion, can be made to fall back on fish
-when it does not find any completion candidate with its native completion
+Eshell, which uses `pcomplete` for completion, can be made to fall back on
+`fish` when it does not find any completion candidate with its native completion
 support.
+
+`M-x shell` can be made to use `fish`.  This will disable the underlying shell
+completion.
 
 ## Setup
 
 To enable fish fallback completion in all Eshell buffers, add this to your Emacs
-configuartion:
+configuration:
 
 	(when (and (executable-find "fish")
 	           (require 'fish-completion nil t))
-	   (fish-completion-eshell-global-toggle))
+	  (global-fish-completion-mode))
 
 The condition will prevent the package from loading if `fish` is not found
 (change the executable name according to you local installation).
 
 Alternatively, you can simply load the package with `(require 'fish-completion)`
-and call `fish-completion-eshell-toggle` manually.
+and call `fish-completion-mode` manually.
