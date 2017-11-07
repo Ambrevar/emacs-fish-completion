@@ -15,8 +15,8 @@ completion.
 
 ## Setup
 
-To enable fish fallback completion in all Eshell buffers, add this to your Emacs
-configuration:
+To enable fish completion in all Eshell and `M-x shell` buffers, add this to
+your Emacs configuration:
 
 	(when (and (executable-find "fish")
 	           (require 'fish-completion nil t))
