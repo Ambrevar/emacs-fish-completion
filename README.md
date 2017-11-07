@@ -30,5 +30,5 @@ and call `fish-completion-mode` manually.
 
 Optionally, if the package
 [bash-completion](https://github.com/szermatt/emacs-bash-completion) is
-installed, `fish-completion-complete' can be configured to fall back on bash to
-further try completing.  See `fish-completion-fallback-on-bash-p'.
+installed, `fish-completion-complete` can be configured to fall back on bash to
+further try completing.  See `fish-completion-fallback-on-bash-p`.
