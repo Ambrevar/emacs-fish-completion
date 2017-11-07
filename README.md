@@ -27,3 +27,8 @@ The condition will prevent the package from loading if `fish` is not found
 
 Alternatively, you can simply load the package with `(require 'fish-completion)`
 and call `fish-completion-mode` manually.
+
+Optionally, if the package
+[bash-completion](https://github.com/szermatt/emacs-bash-completion) is
+installed, `fish-completion-complete' can be configured to fall back on bash to
+further try completing.  See `fish-completion-fallback-on-bash-p'.
