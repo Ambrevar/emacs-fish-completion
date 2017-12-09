@@ -68,6 +68,14 @@ In `eshell', fish completion is only used when `pcomplete' fails."
           pcomplete-default-completion-function 'fish-completion-shell-complete)))
 
 (defun turn-on-fish-completion-mode ()
+  ;; The first Eshell session will initialize the modules and reload
+  ;; `eshell-mode'.  Since the module em-cmpl sets
+  ;; `pcomplete-default-completion-function', this will override this global
+  ;; minor mode.  To avoid the override, we re-run `fish-completion-mode' in
+  ;; `eshell-mode-hook' locally (first session only).  Other Eshell sessions do
+  ;; not need this workaround.
+  (when (eq major-mode 'eshell-mode)
+      (add-hook 'eshell-mode-hook (lambda () (fish-completion-mode 1)) nil t))
   (fish-completion-mode 1))
 
 (define-globalized-minor-mode global-fish-completion-mode fish-completion-mode turn-on-fish-completion-mode)
