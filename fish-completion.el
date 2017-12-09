@@ -77,7 +77,6 @@ In `eshell', fish completion is only used when `pcomplete' fails."
   (fish-completion-complete (buffer-substring-no-properties
                              (save-excursion (if (eq major-mode 'shell-mode) (comint-bol) (eshell-bol)) (point)) (point))))
 
-;;; TODO: "mpv --" does not complete.  Too many entries?
 (defun fish-completion-complete (raw-prompt)
   "Complete RAW-PROMPT (any string) using the fish shell.
 
@@ -118,7 +117,7 @@ no completion was found with fish."
                             "\n" t)))))
             (if (and (not comp-list)
                      fish-completion-fallback-on-bash-p
-                     (fboundp 'bash-completion-dynamic-complete-nocomint))
+                     (require 'bash-completion nil t))
                 (nth 2 (bash-completion-dynamic-complete-nocomint (save-excursion (eshell-bol) (point)) (point)))
               (if (and comp-list (file-name-directory (car comp-list)))
                   (pcomplete-dirs-or-entries)
