@@ -127,7 +127,7 @@ no completion was found with fish."
                      fish-completion-fallback-on-bash-p
                      (require 'bash-completion nil t))
                 (nth 2 (bash-completion-dynamic-complete-nocomint (save-excursion (eshell-bol) (point)) (point)))
-              (if (and comp-list (file-name-directory (car comp-list)))
+              (if (and comp-list (file-exists-p (car comp-list)))
                   (pcomplete-dirs-or-entries)
                 comp-list))))))
 
